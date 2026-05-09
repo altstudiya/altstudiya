@@ -2,9 +2,114 @@
 
 import { useState } from 'react';
 
+const styles = {
+  section: {
+    padding: '80px 20px',
+    maxWidth: '800px',
+    margin: '0 auto',
+  },
+  title: {
+    fontFamily: "'Space Grotesk', sans-serif",
+    fontSize: 'clamp(2rem, 5vw, 3rem)',
+    fontWeight: 800,
+    background: 'linear-gradient(135deg, #fff, #66fcf1, #00d4ff)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+    textAlign: 'center',
+    marginBottom: '20px',
+  },
+  subtitle: {
+    color: '#b0b8c5',
+    textAlign: 'center',
+    fontSize: '1.1rem',
+    fontFamily: "'Inter', sans-serif",
+    marginBottom: '40px',
+  },
+  form: {
+    backgroundColor: 'rgba(18,20,28,0.7)',
+    backdropFilter: 'blur(8px)',
+    borderRadius: '16px',
+    padding: '40px',
+    border: '1px solid rgba(0,212,255,0.1)',
+  },
+  inputGroup: {
+    marginBottom: '20px',
+  },
+  label: {
+    display: 'block',
+    color: '#b0b8c5',
+    fontSize: '14px',
+    fontFamily: "'Inter', sans-serif",
+    marginBottom: '8px',
+    fontWeight: 500,
+  },
+  input: {
+    width: '100%',
+    padding: '14px 16px',
+    borderRadius: '8px',
+    border: '1px solid rgba(0,212,255,0.2)',
+    backgroundColor: 'rgba(10,10,15,0.5)',
+    color: '#fff',
+    fontSize: '15px',
+    fontFamily: "'Inter', sans-serif",
+    outline: 'none',
+    transition: 'border-color 0.3s',
+    boxSizing: 'border-box',
+  },
+  textarea: {
+    width: '100%',
+    padding: '14px 16px',
+    borderRadius: '8px',
+    border: '1px solid rgba(0,212,255,0.2)',
+    backgroundColor: 'rgba(10,10,15,0.5)',
+    color: '#fff',
+    fontSize: '15px',
+    fontFamily: "'Inter', sans-serif",
+    outline: 'none',
+    transition: 'border-color 0.3s',
+    minHeight: '120px',
+    resize: 'vertical',
+    boxSizing: 'border-box',
+  },
+  button: {
+    width: '100%',
+    padding: '16px',
+    borderRadius: '8px',
+    border: 'none',
+    background: 'linear-gradient(135deg, #00d4ff, #66fcf1)',
+    color: '#0a0a0f',
+    fontFamily: "'Space Grotesk', sans-serif",
+    fontSize: '16px',
+    fontWeight: 600,
+    cursor: 'pointer',
+    transition: 'all 0.3s',
+    marginTop: '10px',
+  },
+  success: {
+    textAlign: 'center',
+    color: '#66fcf1',
+    fontFamily: "'Inter', sans-serif",
+    fontSize: '16px',
+    padding: '20px',
+  },
+  error: {
+    textAlign: 'center',
+    color: '#ff4444',
+    fontFamily: "'Inter', sans-serif",
+    fontSize: '14px',
+    padding: '10px',
+  },
+};
+
 export default function ContactFormSection() {
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
-  const [status, setStatus] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+  });
+  const [status, setStatus] = useState('idle'); // idle | loading | success | error
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -12,158 +117,124 @@ export default function ContactFormSection() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatus('sending');
+    setStatus('loading');
+
     try {
+      const form = new FormData();
+      form.append('name', formData.name);
+      form.append('email', formData.email);
+      form.append('phone', formData.phone);
+      form.append('message', formData.message);
+
       const res = await fetch('https://formsubmit.co/ajax/altstudiya@inbox.ru', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(formData),
+        body: form,
       });
+
       if (res.ok) {
         setStatus('success');
         setFormData({ name: '', email: '', phone: '', message: '' });
+        setTimeout(() => setStatus('idle'), 5000);
       } else {
         setStatus('error');
+        setTimeout(() => setStatus('idle'), 5000);
       }
     } catch {
       setStatus('error');
+      setTimeout(() => setStatus('idle'), 5000);
     }
   };
 
-  const sectionStyle = {
-    padding: '80px 20px',
-    maxWidth: '700px',
-    margin: '0 auto',
-  };
-
-  const titleStyle = {
-    fontFamily: "'Space Grotesk', sans-serif",
-    fontSize: 'clamp(2rem, 4vw, 2.8rem)',
-    fontWeight: 800,
-    textAlign: 'center',
-    marginBottom: '40px',
-    background: 'linear-gradient(135deg, #fff, #66fcf1, #00d4ff)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-  };
-
-  const formStyle = {
-    background: 'rgba(18,20,28,0.7)',
-    backdropFilter: 'blur(8px)',
-    borderRadius: '16px',
-    padding: '40px',
-    border: '1px solid rgba(0,212,255,0.1)',
-  };
-
-  const inputStyle = {
-    width: '100%',
-    padding: '14px 16px',
-    marginBottom: '16px',
-    background: 'rgba(10,10,15,0.6)',
-    border: '1px solid rgba(0,212,255,0.2)',
-    borderRadius: '8px',
-    color: '#fff',
-    fontFamily: "'Inter', sans-serif",
-    fontSize: '0.95rem',
-    outline: 'none',
-    boxSizing: 'border-box',
-    transition: 'border-color 0.3s ease',
-  };
-
-  const textareaStyle = {
-    ...inputStyle,
-    minHeight: '120px',
-    resize: 'vertical',
-  };
-
-  const btnStyle = {
-    width: '100%',
-    padding: '16px',
-    background: 'linear-gradient(135deg, #00d4ff, #66fcf1)',
-    color: '#0a0a0f',
-    border: 'none',
-    borderRadius: '8px',
-    fontFamily: "'Space Grotesk', sans-serif",
-    fontWeight: 700,
-    fontSize: '1.1rem',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    letterSpacing: '1px',
-  };
-
-  const statusStyle = {
-    textAlign: 'center',
-    fontFamily: "'Inter', sans-serif",
-    fontSize: '0.95rem',
-    marginTop: '16px',
-    padding: '12px',
-    borderRadius: '8px',
-  };
-
   return (
-    <section style={sectionStyle}>
-      <h2 style={titleStyle}>Свяжитесь с нами</h2>
-      <form style={formStyle} onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Ваше имя"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          style={inputStyle}
-          onFocus={e => { e.currentTarget.style.borderColor = '#00d4ff'; }}
-          onBlur={e => { e.currentTarget.style.borderColor = 'rgba(0,212,255,0.2)'; }}
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          style={inputStyle}
-          onFocus={e => { e.currentTarget.style.borderColor = '#00d4ff'; }}
-          onBlur={e => { e.currentTarget.style.borderColor = 'rgba(0,212,255,0.2)'; }}
-        />
-        <input
-          type="tel"
-          name="phone"
-          placeholder="Телефон"
-          value={formData.phone}
-          onChange={handleChange}
-          style={inputStyle}
-          onFocus={e => { e.currentTarget.style.borderColor = '#00d4ff'; }}
-          onBlur={e => { e.currentTarget.style.borderColor = 'rgba(0,212,255,0.2)'; }}
-        />
-        <textarea
-          name="message"
-          placeholder="Ваше сообщение"
-          value={formData.message}
-          onChange={handleChange}
-          required
-          style={textareaStyle}
-          onFocus={e => { e.currentTarget.style.borderColor = '#00d4ff'; }}
-          onBlur={e => { e.currentTarget.style.borderColor = 'rgba(0,212,255,0.2)'; }}
-        />
+    <section style={styles.section}>
+      <h2 style={styles.title}>Свяжитесь с нами</h2>
+      <p style={styles.subtitle}>
+        Оставьте заявку, и мы свяжемся с вами в ближайшее время
+      </p>
+
+      <form style={styles.form} onSubmit={handleSubmit}>
+        <input type="hidden" name="_subject" value="Новая заявка с Альтстудия" />
+        <input type="hidden" name="_captcha" value="false" />
+
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Имя</label>
+          <input
+            style={styles.input}
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="Ваше имя"
+            required
+            onFocus={(e) => e.currentTarget.style.borderColor = '#00d4ff'}
+            onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(0,212,255,0.2)'}
+          />
+        </div>
+
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Email</label>
+          <input
+            style={styles.input}
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="your@email.com"
+            required
+            onFocus={(e) => e.currentTarget.style.borderColor = '#00d4ff'}
+            onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(0,212,255,0.2)'}
+          />
+        </div>
+
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Телефон</label>
+          <input
+            style={styles.input}
+            type="tel"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            placeholder="+7 (999) 123-45-67"
+            onFocus={(e) => e.currentTarget.style.borderColor = '#00d4ff'}
+            onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(0,212,255,0.2)'}
+          />
+        </div>
+
+        <div style={styles.inputGroup}>
+          <label style={styles.label}>Сообщение</label>
+          <textarea
+            style={styles.textarea}
+            name="message"
+            value={formData.message}
+            onChange={handleChange}
+            placeholder="Опишите ваш вопрос..."
+            required
+            onFocus={(e) => e.currentTarget.style.borderColor = '#00d4ff'}
+            onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(0,212,255,0.2)'}
+          />
+        </div>
+
         <button
           type="submit"
-          style={btnStyle}
-          disabled={status === 'sending'}
-          onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 0 20px rgba(0,212,255,0.4)'; }}
-          onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; }}
+          style={styles.button}
+          disabled={status === 'loading'}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.boxShadow = '0 0 20px rgba(0,212,255,0.5)';
+            e.currentTarget.style.transform = 'translateY(-2px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.boxShadow = 'none';
+            e.currentTarget.style.transform = 'none';
+          }}
         >
-          {status === 'sending' ? 'Отправка...' : 'Отправить'}
+          {status === 'loading' ? 'Отправка...' : 'Отправить'}
         </button>
+
         {status === 'success' && (
-          <div style={{ ...statusStyle, background: 'rgba(102,252,241,0.1)', color: '#66fcf1', border: '1px solid rgba(102,252,241,0.3)' }}>
-            Сообщение отправлено! Мы свяжемся с вами в ближайшее время.
-          </div>
+          <p style={styles.success}>✓ Сообщение отправлено! Мы свяжемся с вами.</p>
         )}
         {status === 'error' && (
-          <div style={{ ...statusStyle, background: 'rgba(255,0,0,0.1)', color: '#ff4444', border: '1px solid rgba(255,0,0,0.3)' }}>
-            Ошибка отправки. Попробуйте позже.
-          </div>
+          <p style={styles.error}>✗ Ошибка отправки. Попробуйте позже.</p>
         )}
       </form>
     </section>
