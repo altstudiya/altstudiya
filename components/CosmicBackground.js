@@ -8,8 +8,9 @@ export default function CosmicBackground() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
     const ctx = canvas.getContext('2d');
-    let animationId;
+    let animationFrameId;
     let stars = [];
     let nebulae = [];
     let mouseX = 0;
@@ -20,77 +21,101 @@ export default function CosmicBackground() {
       canvas.height = window.innerHeight;
     };
 
-    const initStars = () => {
+    const createStars = () => {
       stars = [];
-      const count = Math.floor((canvas.width * canvas.height) / 4000);
+      const count = Math.floor((canvas.width * canvas.height) / 3000);
       for (let i = 0; i < count; i++) {
         stars.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
           size: Math.random() * 2 + 0.5,
-          speed: Math.random() * 0.3 + 0.05,
           opacity: Math.random() * 0.8 + 0.2,
+          speed: Math.random() * 0.02 + 0.005,
           twinkleSpeed: Math.random() * 0.02 + 0.005,
           twinklePhase: Math.random() * Math.PI * 2,
         });
       }
     };
 
-    const initNebulae = () => {
+    const createNebulae = () => {
       nebulae = [];
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 5; i++) {
         nebulae.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          radius: Math.random() * 300 + 200,
-          color: `hsla(${Math.random() * 60 + 180}, 70%, 40%, 0.03)`,
-          speed: Math.random() * 0.1 + 0.02,
+          radius: Math.random() * 200 + 100,
+          color: `hsla(${Math.random() * 60 + 180}, 70%, 30%, 0.03)`,
+          speedX: (Math.random() - 0.5) * 0.1,
+          speedY: (Math.random() - 0.5) * 0.1,
         });
       }
+    };
+
+    const drawNebula = (nebula) => {
+      const gradient = ctx.createRadialGradient(
+        nebula.x, nebula.y, 0,
+        nebula.x, nebula.y, nebula.radius
+      );
+      gradient.addColorStop(0, `hsla(${Math.random() * 60 + 180}, 70%, 40%, 0.05)`);
+      gradient.addColorStop(0.5, `hsla(${Math.random() * 60 + 180}, 60%, 25%, 0.03)`);
+      gradient.addColorStop(1, 'transparent');
+
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(nebula.x, nebula.y, nebula.radius, 0, Math.PI * 2);
+      ctx.fill();
     };
 
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Draw nebulae
-      nebulae.forEach((nebula, i) => {
-        const gradient = ctx.createRadialGradient(
-          nebula.x, nebula.y, 0,
-          nebula.x, nebula.y, nebula.radius
-        );
-        gradient.addColorStop(0, `hsla(${180 + i * 30}, 70%, 50%, 0.04)`);
-        gradient.addColorStop(0.5, `hsla(${200 + i * 20}, 60%, 30%, 0.02)`);
-        gradient.addColorStop(1, 'rgba(10,10,15,0)');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      nebulae.forEach((nebula) => {
+        nebula.x += nebula.speedX;
+        nebula.y += nebula.speedY;
 
-        nebula.x += (mouseX - canvas.width / 2) * 0.0001 * nebula.speed;
-        nebula.y += (mouseY - canvas.height / 2) * 0.0001 * nebula.speed;
+        if (nebula.x < -200) nebula.x = canvas.width + 200;
+        if (nebula.x > canvas.width + 200) nebula.x = -200;
+        if (nebula.y < -200) nebula.y = canvas.height + 200;
+        if (nebula.y > canvas.height + 200) nebula.y = -200;
+
+        drawNebula(nebula);
       });
 
       // Draw stars
-      stars.forEach(star => {
+      stars.forEach((star) => {
+        const parallaxX = (mouseX - canvas.width / 2) * star.speed * 2;
+        const parallaxY = (mouseY - canvas.height / 2) * star.speed * 2;
         const twinkle = Math.sin(Date.now() * star.twinkleSpeed + star.twinklePhase) * 0.3 + 0.7;
         const opacity = star.opacity * twinkle;
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+
         ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+        ctx.beginPath();
+        ctx.arc(
+          star.x + parallaxX,
+          star.y + parallaxY,
+          star.size,
+          0,
+          Math.PI * 2
+        );
         ctx.fill();
 
-        // Add glow to brighter stars
+        // Glow effect for brighter stars
         if (star.size > 1.5) {
+          ctx.fillStyle = `rgba(0, 212, 255, ${opacity * 0.15})`;
           ctx.beginPath();
-          ctx.arc(star.x, star.y, star.size * 3, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(0, 212, 255, ${opacity * 0.1})`;
+          ctx.arc(
+            star.x + parallaxX,
+            star.y + parallaxY,
+            star.size * 3,
+            0,
+            Math.PI * 2
+          );
           ctx.fill();
         }
-
-        // Parallax movement
-        star.x += (mouseX - canvas.width / 2) * 0.00005 * star.speed;
-        star.y += (mouseY - canvas.height / 2) * 0.00005 * star.speed;
       });
 
-      animationId = requestAnimationFrame(draw);
+      animationFrameId = requestAnimationFrame(draw);
     };
 
     const handleMouseMove = (e) => {
@@ -99,15 +124,15 @@ export default function CosmicBackground() {
     };
 
     resize();
-    initStars();
-    initNebulae();
+    createStars();
+    createNebulae();
     draw();
 
     window.addEventListener('resize', resize);
     window.addEventListener('mousemove', handleMouseMove);
 
     return () => {
-      cancelAnimationFrame(animationId);
+      cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', handleMouseMove);
     };
@@ -124,7 +149,6 @@ export default function CosmicBackground() {
         height: '100%',
         zIndex: -1,
         pointerEvents: 'none',
-        background: '#0a0a0f',
       }}
     />
   );
