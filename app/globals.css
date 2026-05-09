@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg-dark: #0a0a0f;
+  --bg-card: rgba(18, 20, 28, 0.7);
+  --primary: #00d4ff;
+  --primary-glow: rgba(0, 212, 255, 0.4);
+  --secondary: #66fcf1;
+  --text-white: #ffffff;
+  --text-dim: #b0b8c5;
+  --gradient-bg: radial-gradient(circle at 20% 30%, #0f0f1a, #0a0a0f);
+  --card-border: rgba(0, 212, 255, 0.2);
+  --font-main: 'Space Grotesk', 'Inter', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--gradient-bg);
+  color: var(--text-white);
+  font-family: var(--font-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 30%, #0f0f1a, #0a0a0f);
+  z-index: -2;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(2px 2px at 15px 40px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 60px 120px, #fff, rgba(0,0,0,0)),
+    radial-gradient(3px 3px at 90px 200px, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 150px 300px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 220px 50px, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 280px 180px, #fff, rgba(0,0,0,0)),
+    radial-gradient(3px 3px at 340px 400px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 410px 250px, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 500px 100px, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 550px 350px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 620px 480px, #fff, rgba(0,0,0,0)),
+    radial-gradient(3px 3px at 700px 60px, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 780px 280px, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 850px 420px, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 920px 150px, #fff, rgba(0,0,0,0)),
+    radial-gradient(3px 3px at 980px 380px, #fff, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 400px 400px;
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: -1;
+}
