@@ -2,36 +2,72 @@
 
 import { useState } from 'react';
 
+const ClockIcon = () => (
+  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" strokeWidth="1.5">
+    <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+  </svg>
+);
+
+const ShieldCheckIcon = () => (
+  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" strokeWidth="1.5">
+    <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+  </svg>
+);
+
+const ToolIcon = () => (
+  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" strokeWidth="1.5">
+    <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+  </svg>
+);
+
+const SofaIcon = () => (
+  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" strokeWidth="1.5">
+    <rect x="4" y="9" width="16" height="10" rx="2"/><path d="M8 9V5h8v4"/><line x1="4" y1="17" x2="4" y2="19"/><line x1="20" y1="17" x2="20" y2="19"/>
+  </svg>
+);
+
+const HomeIcon2 = () => (
+  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" strokeWidth="1.5">
+    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+  </svg>
+);
+
+const KeyIcon = () => (
+  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" strokeWidth="1.5">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+  </svg>
+);
+
 const offers = [
   {
     title: 'Качественный подбор',
     desc: 'Мы тщательно отбираем объекты недвижимости, проверяем документы и юридическую чистоту. Вы получаете только лучшие варианты, соответствующие вашим критериям и бюджету.',
-    icon: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
+    icon: <ClockIcon />,
   },
   {
     title: 'Юридическое сопровождение',
     desc: 'Полное юридическое сопровождение сделки от начала до конца. Помощь в оформлении документов, проверка контрагентов, регистрация права собственности.',
-    icon: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" strokeWidth="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
+    icon: <ShieldCheckIcon />,
   },
   {
     title: 'Ремонт',
     desc: 'Предлагаем варианты с уже выполненным ремонтом или под ваш индивидуальный проект. Сотрудничаем с проверенными бригадами и дизайнерами.',
-    icon: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" strokeWidth="1.5"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>',
+    icon: <ToolIcon />,
   },
   {
     title: 'Мебель',
     desc: 'Комплектация студий мебелью под ключ. Современный дизайн, качественные материалы, быстрая установка. Всё включено.',
-    icon: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" strokeWidth="1.5"><rect x="4" y="9" width="16" height="10" rx="2"/><path d="M8 9V5h8v4"/><line x1="4" y1="17" x2="4" y2="19"/><line x1="20" y1="17" x2="20" y2="19"/></svg>',
+    icon: <SofaIcon />,
   },
   {
     title: 'Хоумстейджинг',
     desc: 'Профессиональная подготовка объекта к продаже. Повышаем привлекательность студии для покупателей и увеличиваем стоимость сделки.',
-    icon: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" strokeWidth="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+    icon: <HomeIcon2 />,
   },
   {
     title: 'Управление объектом',
     desc: 'Берём на себя управление вашей недвижимостью: поиск арендаторов, контроль платежей, решение текущих вопросов. Пассивный доход без хлопот.',
-    icon: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+    icon: <KeyIcon />,
   },
 ];
 
@@ -114,7 +150,7 @@ export default function OfferSection() {
             }}
           >
             <div style={cardHeaderStyle}>
-              <span dangerouslySetInnerHTML={{ __html: offer.icon }} />
+              <span style={{ display: 'flex', alignItems: 'center' }}>{offer.icon}</span>
               <span style={cardTitleStyle}>{offer.title}</span>
             </div>
             <div
