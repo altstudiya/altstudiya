@@ -1,8 +1,33 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function HeroSection() {
+  const [pulseBrightness, setPulseBrightness] = useState(1);
+
+  useEffect(() => {
+    let increasing = true;
+    const interval = setInterval(() => {
+      setPulseBrightness(prev => {
+        if (increasing) {
+          if (prev >= 1.3) {
+            increasing = false;
+            return prev - 0.02;
+          }
+          return prev + 0.02;
+        } else {
+          if (prev <= 1) {
+            increasing = true;
+            return prev + 0.02;
+          }
+          return prev - 0.02;
+        }
+      });
+    }, 50);
+    return () => clearInterval(interval);
+  }, []);
+
   const sectionStyle = {
     minHeight: '90vh',
     display: 'flex',
@@ -24,8 +49,9 @@ export default function HeroSection() {
     WebkitTextFillColor: 'transparent',
     letterSpacing: '8px',
     marginBottom: '20px',
-    animation: 'colorPulse 4s ease-in-out infinite',
+    filter: `brightness(${pulseBrightness})`,
     lineHeight: 1.1,
+    transition: 'filter 0.05s ease',
   };
 
   const subtitleStyle = {
@@ -79,47 +105,37 @@ export default function HeroSection() {
     border: '1px solid #00d4ff',
   };
 
-  const keyframesStyle = `
-    @keyframes colorPulse {
-      0%, 100% { filter: brightness(1); }
-      50% { filter: brightness(1.3); }
-    }
-  `;
-
   return (
-    <>
-      <style>{keyframesStyle}</style>
-      <section style={sectionStyle}>
-        <h1 style={titleStyle}>АЛЬТСТУДИЯ</h1>
-        <p style={subtitleStyle}>Вход в недвижимость.</p>
-        <p style={accentSubtitleStyle}>Без переплат за воздух.</p>
-        <div style={btnRowStyle}>
-          <Link
-            href="/kstudio"
-            style={btnPrimary}
-            onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 0 25px rgba(0,212,255,0.5)'; }}
-            onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; }}
-          >
-            Студии с кадастром
-          </Link>
-          <Link
-            href="/dstudio"
-            style={btnSecondary}
-            onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 0 15px rgba(0,212,255,0.3)'; e.currentTarget.style.background = 'rgba(0,212,255,0.1)'; }}
-            onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.background = 'transparent'; }}
-          >
-            Долевые студии
-          </Link>
-          <Link
-            href="/law"
-            style={btnSecondary}
-            onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 0 15px rgba(0,212,255,0.3)'; e.currentTarget.style.background = 'rgba(0,212,255,0.1)'; }}
-            onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.background = 'transparent'; }}
-          >
-            Что говорит закон
-          </Link>
-        </div>
-      </section>
-    </>
+    <section style={sectionStyle}>
+      <h1 style={titleStyle}>АЛЬТСТУДИЯ</h1>
+      <p style={subtitleStyle}>Вход в недвижимость.</p>
+      <p style={accentSubtitleStyle}>Без переплат за воздух.</p>
+      <div style={btnRowStyle}>
+        <Link
+          href="/kstudio"
+          style={btnPrimary}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 0 25px rgba(0,212,255,0.5)'; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; }}
+        >
+          Студии с кадастром
+        </Link>
+        <Link
+          href="/dstudio"
+          style={btnSecondary}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 0 15px rgba(0,212,255,0.3)'; e.currentTarget.style.background = 'rgba(0,212,255,0.1)'; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.background = 'transparent'; }}
+        >
+          Долевые студии
+        </Link>
+        <Link
+          href="/law"
+          style={btnSecondary}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 0 15px rgba(0,212,255,0.3)'; e.currentTarget.style.background = 'rgba(0,212,255,0.1)'; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.background = 'transparent'; }}
+        >
+          Что говорит закон
+        </Link>
+      </div>
+    </section>
   );
 }
