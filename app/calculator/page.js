@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Chart from 'chart.js/auto';
 
 export default function CalculatorPage() {
   const searchParams = useSearchParams();
   const chartRef = useRef(null);
-  const [chartInstance, setChartInstance] = useState(null);
+  const chartInstanceRef = useRef(null);
 
   const [price, setPrice] = useState(Number(searchParams.get('price')) || 5000000);
   const [area, setArea] = useState(Number(searchParams.get('area')) || 25);
@@ -52,66 +53,65 @@ export default function CalculatorPage() {
   const data = generateData();
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && chartRef.current) {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-      script.onload = () => {
-        if (chartInstance) chartInstance.destroy();
-        const ctx = chartRef.current.getContext('2d');
-        const labels = data.map(d => `${d.year} г.`);
-        const instance = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels,
-            datasets: [
-              {
-                label: 'Стоимость студии',
-                data: data.map(d => d.price),
-                borderColor: '#00d4ff',
-                backgroundColor: 'rgba(0,212,255,0.1)',
-                fill: true,
-                tension: 0.4,
-              },
-              {
-                label: 'Общий доход',
-                data: data.map(d => d.totalIncome),
-                borderColor: '#66fcf1',
-                backgroundColor: 'rgba(102,252,241,0.1)',
-                fill: true,
-                tension: 0.4,
-              },
-              {
-                label: 'Итоговая стоимость',
-                data: data.map(d => d.value),
-                borderColor: '#fff',
-                backgroundColor: 'rgba(255,255,255,0.05)',
-                fill: true,
-                tension: 0.4,
-                borderDash: [5, 5],
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                labels: { color: '#b0b8c5', font: { family: 'Inter' } },
-              },
+    if (chartRef.current) {
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy();
+      }
+      const ctx = chartRef.current.getContext('2d');
+      const labels = data.map(d => `${d.year} г.`);
+      const instance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Стоимость студии',
+              data: data.map(d => d.price),
+              borderColor: '#00d4ff',
+              backgroundColor: 'rgba(0,212,255,0.1)',
+              fill: true,
+              tension: 0.4,
             },
-            scales: {
-              x: { ticks: { color: '#6a7280' }, grid: { color: 'rgba(255,255,255,0.05)' } },
-              y: { ticks: { color: '#6a7280', callback: v => v.toLocaleString('ru-RU') + ' ₽' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+            {
+              label: 'Общий доход',
+              data: data.map(d => d.totalIncome),
+              borderColor: '#66fcf1',
+              backgroundColor: 'rgba(102,252,241,0.1)',
+              fill: true,
+              tension: 0.4,
+            },
+            {
+              label: 'Итоговая стоимость',
+              data: data.map(d => d.value),
+              borderColor: '#fff',
+              backgroundColor: 'rgba(255,255,255,0.05)',
+              fill: true,
+              tension: 0.4,
+              borderDash: [5, 5],
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: '#b0b8c5', font: { family: 'Inter' } },
             },
           },
-        });
-        setChartInstance(instance);
-      };
-      document.body.appendChild(script);
-      return () => {
-        if (chartInstance) chartInstance.destroy();
-      };
+          scales: {
+            x: { ticks: { color: '#6a7280' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+            y: { ticks: { color: '#6a7280', callback: v => v.toLocaleString('ru-RU') + ' ₽' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+          },
+        },
+      });
+      chartInstanceRef.current = instance;
     }
+    return () => {
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy();
+      }
+    };
   }, [price, area, rentType, growthRate, rentGrowth, years]);
 
   const loadFavorite = async (id) => {
